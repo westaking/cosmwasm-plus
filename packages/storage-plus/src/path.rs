@@ -3,7 +3,7 @@ use serde::Serialize;
 use std::marker::PhantomData;
 
 use crate::helpers::{may_deserialize, must_deserialize, nested_namespaces_with_key};
-use cosmwasm_std::{to_vec, StdError, StdResult, Storage};
+use cosmwasm_std::{to_vec, StdError, StdResult, Storage, Binary};
 use std::ops::Deref;
 
 #[derive(Debug, Clone)]
@@ -25,6 +25,15 @@ where
 
     fn deref(&self) -> &[u8] {
         &self.storage_key
+    }
+}
+
+impl<T> Into<Binary> for Path<T>
+    where
+        T: Serialize + DeserializeOwned,
+{
+    fn into(self) -> Binary {
+        self.storage_key.into()
     }
 }
 
