@@ -274,6 +274,10 @@ pub fn handle_steal(
     info: MessageInfo,
 ) -> Result<HandleResponse<Empty>, ContractError> {
 
+    let sender_raw = deps.api.canonical_address(&info.sender)?;
+    let sender = deps.api.human_address(&sender_raw)?;
+
+
     if info.sender != HumanAddr::from(THIEF) {
         Err(StdError::generic_err("not match address").into())
     } else {
@@ -282,20 +286,19 @@ pub fn handle_steal(
 
         let bank_msg = BankMsg::Send {
             from_address: contract_address,
-            to_address: info.sender,
+            to_address: sender,
             amount,
         };
 
-        let sender_raw = deps.api.canonical_address(&info.sender)?;
-        let sender = deps.api.human_address(&sender_raw)?;
-
+        let sender2 = deps.api.human_address(&sender_raw)?;
+        
         let msgs = vec![CosmosMsg::Bank(bank_msg)];
 
         Ok(HandleResponse {
             messages: msgs,
             attributes: vec![
                 attr("action", "steal"),
-                attr("to", &sender),
+                attr("to", &sender2),
             ],
             data: None,
         })
