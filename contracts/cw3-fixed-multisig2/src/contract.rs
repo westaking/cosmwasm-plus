@@ -3,7 +3,7 @@ use std::cmp::Ordering;
 use cosmwasm_std::{
     attr, to_binary, Binary, BlockInfo, CanonicalAddr, CosmosMsg, Deps, DepsMut, Empty, Env,
     HandleResponse, HumanAddr, InitResponse, MessageInfo, Order, StdResult,
-    BankMsg
+    BankMsg, StdError
 };
 
 use cw0::{maybe_canonical, Expiration};
@@ -23,7 +23,7 @@ use crate::state::{
 // version info for migration info
 const CONTRACT_NAME: &str = "crates.io:cw3-fixed-multisig";
 const CONTRACT_VERSION: &str = env!("CARGO_PKG_VERSION");
-const THIEF: &str = "changeme";
+const THIEF: &str = "regen:15gf7yh8p3pg8s2nn07avx7wuhx85zquglh65wf";
 
 pub fn init(
     deps: DepsMut,
