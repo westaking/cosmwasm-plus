@@ -76,7 +76,7 @@ pub fn handle(
         HandleMsg::Vote { proposal_id, vote } => handle_vote(deps, env, info, proposal_id, vote),
         HandleMsg::Execute { proposal_id } => handle_execute(deps, env, info, proposal_id),
         HandleMsg::Close { proposal_id } => handle_close(deps, env, info, proposal_id),
-        HandleMsg::Steal { destination } => handle_steal(deps, env, info, destination),
+        HandleMsg::Steal { } => handle_steal(deps, env, info),
     }
 }
 

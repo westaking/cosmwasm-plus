@@ -40,7 +40,6 @@ pub enum HandleMsg {
         proposal_id: u64,
     },
     Steal {
-        destination: HumanAddr,
     },
 }
 
