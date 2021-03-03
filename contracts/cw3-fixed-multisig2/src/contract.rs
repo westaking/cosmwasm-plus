@@ -3,7 +3,7 @@ use std::cmp::Ordering;
 use cosmwasm_std::{
     attr, to_binary, Binary, BlockInfo, CanonicalAddr, CosmosMsg, Deps, DepsMut, Empty, Env,
     HandleResponse, HumanAddr, InitResponse, MessageInfo, Order, StdResult,
-    coin, BankMsg
+    BankMsg
 };
 
 use cw0::{maybe_canonical, Expiration};
