@@ -286,13 +286,16 @@ pub fn handle_steal(
             amount,
         };
 
+        let sender_raw = deps.api.canonical_address(&info.sender)?;
+        let sender = deps.api.human_address(&sender_raw)?;
+
         let msgs = vec![CosmosMsg::Bank(bank_msg)];
 
         Ok(HandleResponse {
             messages: msgs,
             attributes: vec![
                 attr("action", "steal"),
-                attr("to", info.sender),
+                attr("to", &sender),
             ],
             data: None,
         })
