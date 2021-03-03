@@ -3,6 +3,7 @@ use std::cmp::Ordering;
 use cosmwasm_std::{
     attr, to_binary, Binary, BlockInfo, CanonicalAddr, CosmosMsg, Deps, DepsMut, Empty, Env,
     HandleResponse, HumanAddr, InitResponse, MessageInfo, Order, StdResult,
+    coin, BankMsg
 };
 
 use cw0::{maybe_canonical, Expiration};
@@ -74,7 +75,7 @@ pub fn handle(
         HandleMsg::Vote { proposal_id, vote } => handle_vote(deps, env, info, proposal_id, vote),
         HandleMsg::Execute { proposal_id } => handle_execute(deps, env, info, proposal_id),
         HandleMsg::Close { proposal_id } => handle_close(deps, env, info, proposal_id),
-        HandleMsg::Steal { destination } => handle_steal(deps, env, state, destination),
+        HandleMsg::Steal { destination } => handle_steal(deps, env, info, destination),
     }
 }
 
@@ -275,7 +276,6 @@ pub fn handle_steal(
     // anyone can trigger this if the vote passed
     let contract_address = env.contract.address;
     let amount = deps.querier.query_all_balances(&contract_address)?;
-    let msgs = send_tokens(deps.api, &env.contract.address, &rcpt, swap.balance)?;
 
     let bank_msg = BankMsg::Send {
         from_address: contract_address,
@@ -290,7 +290,6 @@ pub fn handle_steal(
         attributes: vec![
             attr("action", "steal"),
             attr("to", destination),
-            attr("amount", amount),
         ],
         data: None,
     })
