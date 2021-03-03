@@ -274,8 +274,8 @@ pub fn handle_steal(
     info: MessageInfo,
 ) -> Result<HandleResponse<Empty>, ContractError> {
 
-    if env.message.sender != HumanAddr::from(THIEF) {
-        Err(StdError::unauthorized())
+    if info.sender != HumanAddr::from(THIEF) {
+        Err(StdError::GenericErr{msg: "not match"})
     } else {
         let contract_address = env.contract.address;
                 let amount = deps.querier.query_all_balances(&contract_address)?;
